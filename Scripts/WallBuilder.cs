@@ -18,7 +18,6 @@ public class WallBuilder : Singleton<WallBuilder> {
 
 	void OnEnable () {
 
-		WallManager.instance.onNewDimensions += updateDim;
 		setupAndBuild ();
 	}
 
@@ -34,7 +33,7 @@ public class WallBuilder : Singleton<WallBuilder> {
 		GameObject[,] ceiling = new GameObject[xAmt,zAmt];
 		GameObject[,] floor = new GameObject[xAmt, zAmt];
 		createCeilingAndFloor (out ceiling, out floor);
-		WallManager.instance.setupPaths (walls, ceiling, floor);
+		WallManager.instance.SetupPaths (walls, ceiling, floor);
 	}
 
 	GameObject[][,] createWalls() {
@@ -86,7 +85,6 @@ public class WallBuilder : Singleton<WallBuilder> {
 			for (int w = 0; w < width; w++ ) {
 				GameObject obj = GameObject.Instantiate (tile, worldRotation * position , localRotation) as GameObject;
 				wall[w,h] = obj;
-				obj.renderer.material.color = WallManager.instance.normalColor;
 				position .x += tileLen;
 			}
 			position .x = initX;

@@ -4,25 +4,13 @@ using System;
 
 public class WallManager : Singleton<WallManager>{
 
-	public GameObject tile;
-	public static Vector3 tileDimensions;
-	public GameObject[][,] pathAroundY;
-	public GameObject[][,] pathAroundX;
-	public GameObject[][,] pathAroundZ;
-	public int xAmt, yAmt, zAmt; //amount of tiles along each axis
-	public delegate void dimensionHandler(int x, int y, int z);
-	public event dimensionHandler onNewDimensions;
-	public delegate void changeColor (Color color, float trans, bool rand);
-	public event changeColor OnNewColor;
-
-	public Color normalColor;
-	public Color activeColor;
-
 	void OnEnable () {
 
 		InitTileLengths ();
 	}
 
+	public GameObject tile;
+	public static Vector3 tileDimensions;
 	void InitTileLengths () {
 
 		GameObject tile = Instantiate (this.tile) as GameObject;
@@ -30,11 +18,15 @@ public class WallManager : Singleton<WallManager>{
 		Destroy (tile);
 	}
 
-	public void setupPaths(GameObject[][,] walls, GameObject[,] ceiling, GameObject[,] floor) {
+	public GameObject[][,] pathAroundY;
+	public GameObject[][,] pathAroundX;
+	public GameObject[][,] pathAroundZ;
+	public int xAmt, yAmt, zAmt; //amount of tiles along each axis
+	public void SetupPaths(GameObject[][,] walls, GameObject[,] ceiling, GameObject[,] floor) {
 
-		pathAroundX = setupPath (walls, pathAroundX, xAmt, yAmt, xAmt, zAmt);
-		pathAroundY = setupPath (walls, pathAroundY, xAmt, yAmt, zAmt, yAmt); 
-		pathAroundZ = setupPath (walls, pathAroundZ, xAmt, zAmt, zAmt, yAmt);
+		pathAroundX = SetupPath (walls, pathAroundX, xAmt, yAmt, xAmt, zAmt);
+		pathAroundY = SetupPath (walls, pathAroundY, xAmt, yAmt, zAmt, yAmt); 
+		pathAroundZ = SetupPath (walls, pathAroundZ, xAmt, zAmt, zAmt, yAmt);
 
 		Array.Copy (ceiling, pathAroundX [1], xAmt * zAmt); 
 		Array.Copy (floor, pathAroundX [3], xAmt * zAmt);
@@ -43,7 +35,7 @@ public class WallManager : Singleton<WallManager>{
 		Array.Copy (floor, pathAroundZ [2], xAmt * zAmt);
 	}
 
-	GameObject[][,] setupPath(GameObject[][,] walls, GameObject[][,] path, int width1, int height1, int width2, int height2) {
+	GameObject[][,] SetupPath(GameObject[][,] walls, GameObject[][,] path, int width1, int height1, int width2, int height2) {
 		
 		path = new GameObject[4][,];
 		for (int wall = 0; wall < 4; wall++) {
@@ -61,11 +53,8 @@ public class WallManager : Singleton<WallManager>{
 		}
 		return path;
 	}
-	void Update () {
-	
-	}
 
-	public Vector2 randomizeVector(int xSpeed, int ySpeed) {
+	public Vector2 RandomizeVector(int xSpeed, int ySpeed) {
 
 		int sign;
 		if (UnityEngine.Random.Range(0, 100) < 50)
@@ -73,21 +62,6 @@ public class WallManager : Singleton<WallManager>{
 		else 
 			sign = 1;
 		return new Vector2(xSpeed * sign, ySpeed * sign);
-	}
-
-	public void updateDimensions (int x, int y, int z) {
-		
-		xAmt = x;
-		yAmt = y;
-		zAmt = z;
-		if (onNewDimensions != null)
-			onNewDimensions(x,y,z);
-	}
-
-	public void triggerNewColor(Color color, float trans, bool rand) {
-		
-		if (OnNewColor != null)
-			OnNewColor(color, trans, rand);
 	}
 
 }
