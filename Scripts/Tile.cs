@@ -9,6 +9,16 @@ public class Tile : MonoBehaviour {
 	}
 	
 	void OnCollisionEnter (Collision collision) {
+
+		MoveNearBlocks ();
+	}
+
+	void MoveNearBlocks () {
+
+	}
+
+	public void Move () {
+
 		StopAllCoroutines ();
 		StartCoroutine (Move (2));
 	}
@@ -37,11 +47,11 @@ public class Tile : MonoBehaviour {
 	bool SetPosition (Vector3 initPosition, float currentDistance) {
 
 		if (totalDistance > WallManager.tileDimensions.y) {
-			transform.position = WallManager.tileDimensions.y * transform.up + originalPosition;
+			transform.position = -WallManager.tileDimensions.y * transform.up + originalPosition;
 			totalDistance = WallManager.tileDimensions.y;
 			return true;
 		} else {
-			transform.position = currentDistance * transform.up + initPosition;
+			transform.position = -currentDistance * transform.up + initPosition;
 			return false;
 		}
 	}

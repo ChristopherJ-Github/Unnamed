@@ -18,61 +18,66 @@ public class WallBuilder : Singleton<WallBuilder> {
 
 	void OnEnable () {
 
-		setupAndBuild ();
+		InitVariables ();
+		BuildsWalls ();
 	}
 
-	void setupAndBuild () {
+	void InitVariables () {
 
 		xAmt = WallManager.instance.xAmt;
 		yAmt = WallManager.instance.yAmt;
 		zAmt = WallManager.instance.zAmt;
 		tile = WallManager.instance.tile;
 		tileLen = WallManager.tileDimensions.x;
-		
-		GameObject[][,] walls = createWalls ();
-		GameObject[,] ceiling = new GameObject[xAmt,zAmt];
-		GameObject[,] floor = new GameObject[xAmt, zAmt];
-		createCeilingAndFloor (out ceiling, out floor);
-		WallManager.instance.SetupPaths (walls, ceiling, floor);
 	}
 
-	GameObject[][,] createWalls() {
+	[HideInInspector] public Tile[][,] walls;
+	[HideInInspector] public Tile[,] ceiling, floor;
+	void BuildsWalls () {
 
-		GameObject[][,] walls = new GameObject[4][,];
+		walls = createWalls ();
+		ceiling = new Tile[xAmt,zAmt];
+		floor = new Tile[xAmt, zAmt];
+		CreateCeilingAndFloor (out ceiling, out floor);
+	}
+
+	Tile[][,] createWalls() {
+
+		Tile[][,] walls = new Tile[4][,];
 
 		Quaternion locRot = Quaternion.Euler (-90, 0, 0); //face forward then rotate
 		Quaternion worldRot = Quaternion.Euler (0, 0, 0);
-		walls[0] = createWall(worldRot, locRot, xAmt, yAmt, tileLen * zAmt/2f);
+		walls[0] = CreateWall(worldRot, locRot, xAmt, yAmt, tileLen * zAmt/2f);
 	
 		locRot = Quaternion.Euler (-90, 90, 0);
 		worldRot = Quaternion.Euler (0, 90, 0);
-		walls[1] = createWall(worldRot, locRot, zAmt, yAmt, tileLen * xAmt/2f);
+		walls[1] = CreateWall(worldRot, locRot, zAmt, yAmt, tileLen * xAmt/2f);
 
 		locRot = Quaternion.Euler (-90, 180, 0); 
 		worldRot = Quaternion.Euler (0, 0, 0);
-		walls[2] = createWall(worldRot, locRot, xAmt, yAmt, -tileLen * zAmt/2f);
+		walls[2] = CreateWall(worldRot, locRot, xAmt, yAmt, -tileLen * zAmt/2f);
 
 		locRot = Quaternion.Euler (-90, 270, 0); 
 		worldRot = Quaternion.Euler (0, 90, 0);
-		walls[3] = createWall(worldRot, locRot, zAmt, yAmt, -tileLen * xAmt/2f);
+		walls[3] = CreateWall(worldRot, locRot, zAmt, yAmt, -tileLen * xAmt/2f);
 
 		return walls;
 	}
 
-	void createCeilingAndFloor(out GameObject[,] ceiling, out GameObject[,] floor) {
+	void CreateCeilingAndFloor(out Tile[,] ceiling, out Tile[,] floor) {
 
 		Quaternion locRot = Quaternion.Euler (180, 0, 0);
 		Quaternion worldRot = Quaternion.Euler (-90, 0, 0);
-		ceiling = createWall(worldRot, locRot, xAmt, zAmt, yAmt * tileLen /2f);
+		ceiling = CreateWall(worldRot, locRot, xAmt, zAmt, yAmt * tileLen /2f);
 
 		locRot = Quaternion.Euler (0, 0, 0);
 		worldRot = Quaternion.Euler (-90, 0, 0);
-		floor = createWall(worldRot, locRot, xAmt, zAmt, -yAmt * tileLen /2f);;
+		floor = CreateWall(worldRot, locRot, xAmt, zAmt, -yAmt * tileLen /2f);;
 	}
 
-	GameObject[,] createWall (Quaternion worldRotation, Quaternion localRotation, int width, int height, float depthShift = 0, float widthShift = 0, float heightShift = 0) {//return wall array
+	Tile[,] CreateWall (Quaternion worldRotation, Quaternion localRotation, int width, int height, float depthShift = 0, float widthShift = 0, float heightShift = 0) {//return wall array
 
-		GameObject[,] wall = new GameObject[width, height];
+		Tile[,] wall = new Tile[width, height];
 
 		float initX = -tileLen / 2f * (width - 1);
 		float initY = -tileLen / 2f * (height - 1);
@@ -84,37 +89,13 @@ public class WallBuilder : Singleton<WallBuilder> {
 		for (int h = 0; h < height; h++) {
 			for (int w = 0; w < width; w++ ) {
 				GameObject obj = GameObject.Instantiate (tile, worldRotation * position , localRotation) as GameObject;
-				wall[w,h] = obj;
+				Tile tileInstance = obj.GetComponent<Tile>();
+				wall[w,h] = tileInstance;
 				position .x += tileLen;
 			}
 			position .x = initX;
 			position .y += tileLen;
 		}
 		return wall;
-	}
-
-	void deleteWalls() {
-
-		foreach (GameObject[,] wall in WallManager.instance.pathAroundY)
-			foreach (GameObject tile in wall)
-				GameObject.Destroy(tile);
-		foreach (GameObject tile in WallManager.instance.pathAroundX[1]) //ceiling
-			GameObject.Destroy(tile);
-		foreach (GameObject tile in WallManager.instance.pathAroundX[3]) //floor
-			GameObject.Destroy(tile);
-	}
-
-	public void rebuildWalls () {
-
-		deleteWalls ();
-		setupAndBuild ();
-		notifyNewWall ();
-	}
-
-	void updateDim(int x, int y, int z) {
-		
-		xAmt = x;
-		yAmt = y;
-		zAmt = z;
 	}
 }
