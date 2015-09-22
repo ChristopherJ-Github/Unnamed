@@ -29,5 +29,4 @@ public class WallManager : Singleton<WallManager>{
 	}
 
 	public int xAmt, yAmt, zAmt; //amount of tiles along each axis
-
 }

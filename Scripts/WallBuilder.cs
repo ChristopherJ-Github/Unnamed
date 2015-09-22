@@ -32,35 +32,27 @@ public class WallBuilder : Singleton<WallBuilder> {
 	}
 
 	[HideInInspector] public Tile[][,] walls;
-	[HideInInspector] public Tile[,] ceiling, floor;
 	void BuildsWalls () {
 
 		walls = createWalls ();
-		ceiling = new Tile[xAmt,zAmt];
-		floor = new Tile[xAmt, zAmt];
-		CreateCeilingAndFloor (out ceiling, out floor);
+		CreateCeilingAndFloor (out walls[4], out walls[5]);
 	}
 
 	Tile[][,] createWalls() {
 
-		Tile[][,] walls = new Tile[4][,];
-
+		Tile[][,] walls = new Tile[6][,];
 		Quaternion locRot = Quaternion.Euler (-90, 0, 0); //face forward then rotate
 		Quaternion worldRot = Quaternion.Euler (0, 0, 0);
-		walls[0] = CreateWall(worldRot, locRot, xAmt, yAmt, tileLen * zAmt/2f);
-	
+		walls[0] = CreateWall(worldRot, locRot, xAmt, yAmt, tileLen * zAmt/2f, 0);
 		locRot = Quaternion.Euler (-90, 90, 0);
 		worldRot = Quaternion.Euler (0, 90, 0);
-		walls[1] = CreateWall(worldRot, locRot, zAmt, yAmt, tileLen * xAmt/2f);
-
+		walls[1] = CreateWall(worldRot, locRot, zAmt, yAmt, tileLen * xAmt/2f, 1);
 		locRot = Quaternion.Euler (-90, 180, 0); 
 		worldRot = Quaternion.Euler (0, 0, 0);
-		walls[2] = CreateWall(worldRot, locRot, xAmt, yAmt, -tileLen * zAmt/2f);
-
+		walls[2] = CreateWall(worldRot, locRot, xAmt, yAmt, -tileLen * zAmt/2f, 2);
 		locRot = Quaternion.Euler (-90, 270, 0); 
 		worldRot = Quaternion.Euler (0, 90, 0);
-		walls[3] = CreateWall(worldRot, locRot, zAmt, yAmt, -tileLen * xAmt/2f);
-
+		walls[3] = CreateWall(worldRot, locRot, zAmt, yAmt, -tileLen * xAmt/2f, 3);
 		return walls;
 	}
 
@@ -68,28 +60,28 @@ public class WallBuilder : Singleton<WallBuilder> {
 
 		Quaternion locRot = Quaternion.Euler (180, 0, 0);
 		Quaternion worldRot = Quaternion.Euler (-90, 0, 0);
-		ceiling = CreateWall(worldRot, locRot, xAmt, zAmt, yAmt * tileLen /2f);
-
+		ceiling = CreateWall(worldRot, locRot, xAmt, zAmt, yAmt * tileLen /2f, 4);
 		locRot = Quaternion.Euler (0, 0, 0);
 		worldRot = Quaternion.Euler (-90, 0, 0);
-		floor = CreateWall(worldRot, locRot, xAmt, zAmt, -yAmt * tileLen /2f);;
+		floor = CreateWall(worldRot, locRot, xAmt, zAmt, -yAmt * tileLen /2f, 5);
 	}
 
-	Tile[,] CreateWall (Quaternion worldRotation, Quaternion localRotation, int width, int height, float depthShift = 0, float widthShift = 0, float heightShift = 0) {//return wall array
+	Tile[,] CreateWall (Quaternion worldRotation, Quaternion localRotation, int width, int height, float depthShift, int wallIndex) {//return wall array
 
 		Tile[,] wall = new Tile[width, height];
-
 		float initX = -tileLen / 2f * (width - 1);
 		float initY = -tileLen / 2f * (height - 1);
-		float x = initX + widthShift;
-		float y = initY + heightShift;
+		float x = initX;
+		float y = initY;
 		float z = depthShift;
 		Vector3 position = new Vector3 (x, y, z);
-
 		for (int h = 0; h < height; h++) {
 			for (int w = 0; w < width; w++ ) {
 				GameObject obj = GameObject.Instantiate (tile, worldRotation * position , localRotation) as GameObject;
 				Tile tileInstance = obj.GetComponent<Tile>();
+				tileInstance.wallIndex = wallIndex;
+				tileInstance.wallPosition.x = w;
+				tileInstance.wallPosition.y = h;
 				wall[w,h] = tileInstance;
 				position .x += tileLen;
 			}
