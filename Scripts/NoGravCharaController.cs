@@ -41,6 +41,9 @@ public class NoGravCharaController : Singleton<NoGravCharaController> {
 			velocity += movement;
 			noKeyPressed = false;
 		}
+		if (Input.GetKeyDown(KeyCode.R)) {
+			WallManager.instance.Reset();
+		}
 		
 		rigidbody.AddRelativeForce(speed*velocity + additonalGravity);
 		if (noKeyPressed || Input.GetKey(KeyCode.Space)) { //has to be last

@@ -6,6 +6,7 @@ public class Tile : MonoBehaviour {
 	void Start () {
 
 		originalPosition = transform.position;
+		WallManager.instance.OnReset += ResetPosition;
 	}
 	
 	void OnCollisionEnter (Collision collision) {
@@ -73,5 +74,11 @@ public class Tile : MonoBehaviour {
 			transform.position = currentDistance * transform.up + initPosition;
 			return false;
 		}
+	}
+
+	void ResetPosition () {
+
+		StopAllCoroutines ();
+		StartCoroutine (Move (-totalDistance));
 	}
 }

@@ -28,5 +28,13 @@ public class WallManager : Singleton<WallManager>{
 		return new Vector2(xSpeed * sign, ySpeed * sign);
 	}
 
+	public delegate void resetNotifier ();
+	public event resetNotifier OnReset;
+	public void Reset() {
+
+		if (OnReset != null)
+			OnReset();
+	}
+
 	public int xAmt, yAmt, zAmt; //amount of tiles along each axis
 }
