@@ -56,6 +56,6 @@ public class ChargeWeapon : MonoBehaviour {
 		Vector3 knockBackDir = -Player.instance.transform.forward;
 		knockBackDir.y = 0;
 		float knockback = Mathf.Lerp (0, 120, charge);
-		Player.instance.knockback.knockBack (knockBackDir * knockback, knockback);
+		Player.instance.knockback.Knockback (knockBackDir * knockback, knockback);
 	}
 }

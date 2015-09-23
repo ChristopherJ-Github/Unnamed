@@ -1,59 +1,62 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Player controller that doesn't use high gravity.
+/// </summary>
 public class NoGravCharaController : Singleton<NoGravCharaController> {
 
-	public float speed;
-	public float deceleration;
-	public Vector3 additonalGravity;
-	bool noKeyPressed;
+	void Update () {
+		
+		GetInput ();
+	}
 	
-	void OnEnable () {
-
+	void GetInput() {
+	
+		Vector3 velocity = GetPlayerMovement ();
+		MovePlayer (velocity);
+		CheckForReset ();
 	}
 
-	void movement() {
+	public Vector3 additonalGravity; 
+	private bool noKeyPressed;
+	Vector3 GetPlayerMovement () {
 
 		Vector3 velocity = new Vector3 ();
-		Vector3 movement;
-		
 		noKeyPressed = true;
 		if (Input.GetKey (KeyCode.W)) {
-			movement = new Vector3(0,0,1);
-			velocity += movement;
+			velocity += new Vector3(0,0,1);
 			noKeyPressed = false;
 		}
-		
 		if (Input.GetKey (KeyCode.A)) {
-			movement = new Vector3(-1,0,0);
-			velocity += movement;
+			velocity += new Vector3(-1,0,0);
 			noKeyPressed = false;
 		}
-		
 		if (Input.GetKey (KeyCode.S)) {
-			movement = new Vector3(0,0,-1);
-			velocity += movement;
+			velocity += new Vector3(0,0,-1);
 			noKeyPressed = false;
 		}
-		
 		if (Input.GetKey (KeyCode.D)) {
-			movement = new Vector3(1,0,0);
-			velocity += movement;
+			velocity += new Vector3(1,0,0);
 			noKeyPressed = false;
 		}
+		return velocity;
+	}
+	
+	public float speed;
+	public float deceleration;
+	void MovePlayer (Vector3 velocity) {
+
+		rigidbody.AddRelativeForce(speed * velocity + additonalGravity);
+		if (noKeyPressed || Input.GetKey(KeyCode.Space)) { 
+			rigidbody.velocity = rigidbody.velocity * deceleration;
+		}
+	}
+
+	void CheckForReset () {
+
 		if (Input.GetKeyDown(KeyCode.R)) {
 			WallManager.instance.Reset();
 		}
-		
-		rigidbody.AddRelativeForce(speed*velocity + additonalGravity);
-		if (noKeyPressed || Input.GetKey(KeyCode.Space)) { //has to be last
-			rigidbody.velocity = rigidbody.velocity * deceleration;
-		}
-
-	}
-
-	void Update () {
-
-		movement ();
 	}
 }

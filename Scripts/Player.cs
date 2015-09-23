@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Class that contains information about the player
+/// </summary>
 public class Player : Singleton<Player> {
 
-	[HideInInspector] public int score;
 	[HideInInspector] public Quaternion rotation;
 	[HideInInspector] public Vector3 position;
 	[HideInInspector] public PlayerKnockback knockback;
-
 	void Start () {
 
 		rotation = transform.rotation;

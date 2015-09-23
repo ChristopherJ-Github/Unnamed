@@ -6,12 +6,6 @@ using System.Collections;
 /// to gain damage from various types of damagers
 /// </summary>
 public class Damager : MonoBehaviour {
-	
-	public virtual Vector3 GetKnockback (out float magnitude) {
-
-		magnitude = 0;
-		return new Vector3 (0,0,0); 
-	}
 
 	public float damage;
 	public string shooter;
