@@ -2,15 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Class in charge of moving charge projectile
+/// based on charge amount.
+/// </summary>
 public class ChargableProjectileMovement : MonoBehaviour {
-
-	public float minSpeed, maxSpeed;
-	float speed;
-	Vector3 movement;
-	Vector3 direction;
-	public float maxDistance;
-	Vector3 initPos;
-	public GameObject particles;
 
 	void Start () {
 
@@ -18,11 +14,16 @@ public class ChargableProjectileMovement : MonoBehaviour {
 		initPos = transform.position;
 	}
 
-	public void init (float lerp) {
+	public float minSpeed, maxSpeed;
+	private float speed;
+	public void Init (float lerp) {
 
 		speed = Mathf.Lerp (minSpeed, maxSpeed, lerp);
 	}
-	
+
+	private Vector3 direction;
+	private Vector3 initPos;
+	public float maxDistance;
 	void Update () {
 		
 		transform.Translate (direction * speed * Time.deltaTime, Space.World);
