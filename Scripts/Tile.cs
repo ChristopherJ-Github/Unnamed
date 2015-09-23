@@ -22,12 +22,12 @@ public class Tile : MonoBehaviour {
 		int wallPosX = (int)wallPosition.x;
 		int wallPosY = (int)wallPosition.y;
 		for (int x = wallPosX - spread; x <= wallPosX + spread; x++) {
-			if (x < 0 || x >= WallBuilder.instance.walls[wallIndex].GetLength(0))
+			if (x < 0 || x >= WallManager.instance.walls[wallIndex].GetLength(0))
 				continue;
 			for (int y = wallPosY + spread; y >= wallPosY - spread; y--) {
-				if (y < 0 || y >= WallBuilder.instance.walls[wallIndex].GetLength(1))
+				if (y < 0 || y >= WallManager.instance.walls[wallIndex].GetLength(1))
 					continue;
-				WallBuilder.instance.walls[wallIndex][x,y].Move();
+				WallManager.instance.walls[wallIndex][x,y].Move();
 			}
 		}
 	}

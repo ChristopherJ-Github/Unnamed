@@ -3,15 +3,14 @@ using System.Collections;
 using System;
 
 /// <summary>
-/// Class that builds the walls and holds the array
-/// that contains all of the tiles
+/// Class that builds the walls
 /// </summary>
 public class WallBuilder : Singleton<WallBuilder> {
-
+	
 	void OnEnable () {
 
 		InitVariables ();
-		BuildWalls ();
+		WallManager.instance.walls = CreateWalls ();
 	}
 
 	void InitVariables () {
@@ -21,25 +20,16 @@ public class WallBuilder : Singleton<WallBuilder> {
 		zAmt = WallManager.instance.zAmt;
 		tileLen = WallManager.tileDimensions.x;
 	}
-	
-	// Array of 6 2D arrays representing walls of tiles
-	// indexs 4 and 5 represent the ceiling and floor respectively
-	[HideInInspector] public Tile[][,] walls;
-	/// <summary>
-	/// Builds the walls and tiles and fills the walls array
-	/// </summary>
-	void BuildWalls () {
-
-		walls = CreateWalls ();
-		CreateCeilingAndFloor (out walls[4], out walls[5]);
-	}
 
 	private float tileLen;
 	private int xAmt, yAmt, zAmt;
+	/// <summary>
+	/// Builds the walls and fills the walls array
+	/// </summary>
 	Tile[][,] CreateWalls() {
 
 		Tile[][,] walls = new Tile[6][,];
-		Quaternion locRot = Quaternion.Euler (-90, 0, 0); //face forward then rotate
+		Quaternion locRot = Quaternion.Euler (-90, 0, 0); 
 		Quaternion worldRot = Quaternion.Euler (0, 0, 0);
 		walls[0] = CreateWall(worldRot, locRot, xAmt, yAmt, tileLen * zAmt/2f, 0);
 		locRot = Quaternion.Euler (-90, 90, 0);
@@ -51,17 +41,13 @@ public class WallBuilder : Singleton<WallBuilder> {
 		locRot = Quaternion.Euler (-90, 270, 0); 
 		worldRot = Quaternion.Euler (0, 90, 0);
 		walls[3] = CreateWall(worldRot, locRot, zAmt, yAmt, -tileLen * xAmt/2f, 3);
-		return walls;
-	}
-
-	void CreateCeilingAndFloor(out Tile[,] ceiling, out Tile[,] floor) {
-
-		Quaternion locRot = Quaternion.Euler (180, 0, 0);
-		Quaternion worldRot = Quaternion.Euler (-90, 0, 0);
-		ceiling = CreateWall(worldRot, locRot, xAmt, zAmt, yAmt * tileLen /2f, 4);
+		locRot = Quaternion.Euler (180, 0, 0);
+		worldRot = Quaternion.Euler (-90, 0, 0);
+		walls[4] = CreateWall(worldRot, locRot, xAmt, zAmt, yAmt * tileLen /2f, 4);
 		locRot = Quaternion.Euler (0, 0, 0);
 		worldRot = Quaternion.Euler (-90, 0, 0);
-		floor = CreateWall(worldRot, locRot, xAmt, zAmt, -yAmt * tileLen /2f, 5);
+		walls[5] = CreateWall(worldRot, locRot, xAmt, zAmt, -yAmt * tileLen /2f, 5);
+		return walls;
 	}
 
 	/// <summary>
@@ -74,7 +60,7 @@ public class WallBuilder : Singleton<WallBuilder> {
 	/// <param name="height">Height of the wall.</param>
 	/// <param name="depthShift">Depth shift.</param>
 	/// <param name="wallIndex">Wall index in walls array.</param>
-	Tile[,] CreateWall (Quaternion worldRotation, Quaternion localRotation, int width, int height, float depthShift, int wallIndex) {//return wall array
+	Tile[,] CreateWall (Quaternion worldRotation, Quaternion localRotation, int width, int height, float depthShift, int wallIndex) {
 
 		Tile[,] wall = new Tile[width, height];
 		float initX = -tileLen / 2f * (width - 1);
