@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Class that controls the specific behaviour of
+/// each tile in the walls
+/// </summary>
 public class Tile : MonoBehaviour {
 
 	void Start () {
@@ -16,6 +20,9 @@ public class Tile : MonoBehaviour {
 
 	public int wallIndex;
 	public Vector2 wallPosition;
+	/// <summary>
+	/// Move all tiles in a square area around this one
+	/// </summary>
 	void MoveNearBlocks () {
 
 		int spread = 2;
@@ -32,6 +39,9 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Move tile randomly up or down
+	/// </summary>
 	public void Move () {
 
 		StopAllCoroutines ();
@@ -76,6 +86,9 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Move position back to default one
+	/// </summary>
 	void ResetPosition () {
 
 		StopAllCoroutines ();
