@@ -90,9 +90,10 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
+	public AudioClip slamSound;
 	void PlaySound () {
-		
-		audio.Play ();
+
+		AudioManager.instance.Play(slamSound, transform.position, 1, 1, 700);
 		playSound = false;
 	}
 
