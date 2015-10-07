@@ -6,15 +6,17 @@ using System.Collections;
 /// each tile in the walls
 /// </summary>
 public class Tile : MonoBehaviour {
-
+	
 	void Start () {
 
 		originalPosition = transform.position;
 		WallManager.instance.OnReset += ResetPosition;
 	}
-	
+
+	private bool playSound;
 	void OnCollisionEnter (Collision collision) {
 
+		playSound = true;
 		MoveNearBlocks ();
 	}
 
@@ -47,6 +49,8 @@ public class Tile : MonoBehaviour {
 		StopAllCoroutines ();
 		float distance = Random.Range (-3f, 1f);
 		StartCoroutine (Move (distance));
+		if (playSound)
+			PlaySound ();
 	}
 	
 	public float moveTime;
@@ -84,6 +88,12 @@ public class Tile : MonoBehaviour {
 			transform.position = currentDistance * transform.up + initPosition;
 			return false;
 		}
+	}
+
+	void PlaySound () {
+		
+		audio.Play ();
+		playSound = false;
 	}
 
 	/// <summary>
