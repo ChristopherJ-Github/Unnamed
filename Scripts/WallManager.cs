@@ -22,6 +22,18 @@ public class WallManager : Singleton<WallManager>{
 		Destroy (tile);
 	}
 
+	void Update () {
+
+		CheckForReset ();
+	}
+
+	void CheckForReset () {
+		
+		if (Input.GetKeyDown(KeyCode.R)) {
+			Reset();
+		}
+	}
+
 	public delegate void resetNotifier ();
 	public event resetNotifier OnReset;
 	/// <summary>

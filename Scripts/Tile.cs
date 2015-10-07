@@ -16,8 +16,10 @@ public class Tile : MonoBehaviour {
 	private bool playSound;
 	void OnCollisionEnter (Collision collision) {
 
-		playSound = true;
-		MoveNearBlocks ();
+		if (collision.gameObject.tag == "Projectile") {
+			playSound = true;
+			MoveNearBlocks ();
+		}
 	}
 
 	public int wallIndex;
