@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 /// <summary>
+/// Taken from http://wiki.unity3d.com/index.php/Singleton
+///
 /// Be aware this will not prevent a non singleton constructor
 ///   such as `T myT = new T();`
 /// To prevent that, add `protected T () {}` to your singleton class.

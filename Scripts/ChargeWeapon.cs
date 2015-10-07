@@ -4,6 +4,9 @@ using System.Collections;
 /// <summary>
 /// Weapon that can be charged by holding 
 /// down the fire button
+/// 
+/// Charging functionality is currently not
+/// used.
 /// </summary>
 public class ChargeWeapon : MonoBehaviour {
 
@@ -13,7 +16,7 @@ public class ChargeWeapon : MonoBehaviour {
 	}
 
 	public float chargeSpeed;
-	[HideInInspector] public float charge;
+	[HideInInspector] public float chargeAmount;
 	/// <summary>
 	/// Charge based on how long the fire
 	/// button is being held
@@ -21,11 +24,11 @@ public class ChargeWeapon : MonoBehaviour {
 	void GetInput () {
 
 		if (Input.GetMouseButton(0)) {
-			charge = Mathf.Clamp(charge + (chargeSpeed * Time.deltaTime), 0f, 1f);
-			if (charge == 1)
+			chargeAmount = Mathf.Clamp(chargeAmount + (chargeSpeed * Time.deltaTime), 0f, 1f);
+			if (chargeAmount == 1)
 				Shoot();
 		} else { 
-			if (charge > 0)
+			if (chargeAmount > 0)
 				Shoot();
 		}
 	}
@@ -40,12 +43,12 @@ public class ChargeWeapon : MonoBehaviour {
 		GameObject projectileInst = (GameObject)Instantiate (projectile, forward.position, forward.rotation);
 		ChargableProjectileDamage projectileDamage = projectileInst.GetComponent<ChargableProjectileDamage> ();
 		ChargableProjectileMovement projectileMovement = projectileInst.GetComponent<ChargableProjectileMovement> ();
-		Color color = Color.Lerp (lowCol, highCol, charge);	
-		projectileDamage.Init (charge, color);
-		projectileMovement.Init (charge);
+		Color color = Color.Lerp (lowCol, highCol, chargeAmount);	
+		projectileDamage.Init (chargeAmount, color);
+		projectileMovement.Init (chargeAmount);
 		Recoil ();
 		audio.PlayOneShot (fireSound, 1);
-		charge = 0;
+		chargeAmount = 0;
 	}
 
 	/// <summary>
@@ -55,7 +58,7 @@ public class ChargeWeapon : MonoBehaviour {
 
 		Vector3 knockBackDir = -Player.instance.transform.forward;
 		knockBackDir.y = 0;
-		float knockback = Mathf.Lerp (0, 120, charge);
+		float knockback = Mathf.Lerp (0, 120, chargeAmount);
 		Player.instance.knockback.Knockback (knockBackDir * knockback, knockback);
 	}
 }

@@ -3,7 +3,11 @@ using System.Collections;
 
 /// <summary>
 /// Class that controls the specific behaviour of
-/// each tile in the walls
+/// each tile in the walls.
+/// 
+/// When a tile is hit it triggers surrounding tiles
+/// in a square area to move randomly either inwards
+/// or outwards.
 /// </summary>
 public class Tile : MonoBehaviour {
 	
@@ -38,7 +42,7 @@ public class Tile : MonoBehaviour {
 			for (int y = wallPosY + spread; y >= wallPosY - spread; y--) {
 				if (y < 0 || y >= WallManager.instance.walls[wallIndex].GetLength(1))
 					continue;
-				WallManager.instance.walls[wallIndex][x,y].Move();
+				WallManager.instance.walls[wallIndex][x,y].Move(this.playSound);
 			}
 		}
 	}
@@ -46,7 +50,7 @@ public class Tile : MonoBehaviour {
 	/// <summary>
 	/// Move tile randomly up or down
 	/// </summary>
-	public void Move () {
+	public void Move (bool playSound) {
 
 		StopAllCoroutines ();
 		float distance = Random.Range (-3f, 1f);
@@ -55,14 +59,17 @@ public class Tile : MonoBehaviour {
 			PlaySound ();
 	}
 	
-	public float moveTime;
-	public float totalDistance;
-	public Vector3 originalPosition;
+	public float moveTime; 
+	public float totalDistance; 
+	public Vector3 originalPosition; 
+	/// <summary>
+	/// Move tile based on distance
+	/// </summary>
 	IEnumerator Move (float distance) {
 
-		Vector3 initPosition = transform.position;
-		float currentDistance = 0;
-		float timer = 0;
+		Vector3 initPosition = transform.position; 
+		float currentDistance = 0; 
+		float timer = 0; 
 		while (timer < moveTime) {
 			timer += Time.deltaTime;
 			float distanceNorm = Mathf.InverseLerp(0, moveTime, timer);
@@ -76,6 +83,10 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Set position of tile based on distance from intial position
+	/// and returns true if it can't move any further
+	/// </summary>
 	bool SetPosition (Vector3 initPosition, float currentDistance) {
 
 		if (totalDistance > WallManager.tileDimensions.y/2f) {
@@ -102,7 +113,7 @@ public class Tile : MonoBehaviour {
 	/// <summary>
 	/// Move position back to default one
 	/// </summary>
-	void ResetPosition () {
+	public void ResetPosition () {
 
 		StopAllCoroutines ();
 		StartCoroutine (Move (-totalDistance));
