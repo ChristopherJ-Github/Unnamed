@@ -13,6 +13,8 @@ public class Player : Singleton<Player> {
 
 		rotation = transform.rotation;
 		position = transform.position;
+		originalPosition = position;
+		WallManager.instance.OnReset += ResetPosition;
 		knockback = gameObject.GetComponent<PlayerKnockback> ();
 	}
 	
@@ -20,5 +22,11 @@ public class Player : Singleton<Player> {
 
 		rotation = transform.rotation; 
 		position = transform.position;
+	}
+
+	private Vector3 originalPosition;
+	void ResetPosition () {
+
+		transform.position = originalPosition;
 	}
 }

@@ -15,7 +15,7 @@ public class AutomaticWallMovement : Singleton<AutomaticWallMovement> {
 	
 		StartCoroutine (CountDown ());
 	}
-
+	
 	/// <summary>
 	/// Countdown until another set of tiles should
 	/// be moved
