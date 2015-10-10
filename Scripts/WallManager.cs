@@ -45,6 +45,15 @@ public class WallManager : Singleton<WallManager>{
 			OnReset();
 	}
 
+	public AudioClip slamSound;
+	/// <summary>
+	/// Sound played when something hits a tile
+	/// </summary>
+	public void PlaySlamSound (Vector3 position) {
+		
+		AudioManager.instance.Play(slamSound, position, 1, 1, 700);
+	}
+
 	// Array of 6 2D arrays representing walls of tiles
 	// indexs 4 and 5 represent the ceiling and floor respectively
 	[HideInInspector] public Tile[][,] walls;

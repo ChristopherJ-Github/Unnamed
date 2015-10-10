@@ -16,12 +16,10 @@ public class Tile : MonoBehaviour {
 		originalPosition = transform.position;
 		WallManager.instance.OnReset += ResetPosition;
 	}
-
-	private bool playSound;
+	
 	void OnCollisionEnter (Collision collision) {
 
 		if (collision.gameObject.tag == "Projectile") {
-			playSound = true;
 			MoveNearBlocks ();
 		}
 	}
@@ -42,7 +40,11 @@ public class Tile : MonoBehaviour {
 			for (int y = wallPosY + spread; y >= wallPosY - spread; y--) {
 				if (y < 0 || y >= WallManager.instance.walls[wallIndex].GetLength(1))
 					continue;
-				WallManager.instance.walls[wallIndex][x,y].Move(this.playSound);
+				Tile tile = WallManager.instance.walls[wallIndex][x,y];
+				if (tile == this) 
+					Move(true);
+				else
+					tile.Move(false);
 			}
 		}
 	}
@@ -50,13 +52,13 @@ public class Tile : MonoBehaviour {
 	/// <summary>
 	/// Move tile randomly up or down
 	/// </summary>
-	public void Move (bool playSound) {
+	public void Move (bool playSound, float? distance = null) {
 
 		StopAllCoroutines ();
-		float distance = Random.Range (-3f, 1f);
-		StartCoroutine (Move (distance));
+		float _distance = distance ?? Random.Range (-3f, 1f);
+		StartCoroutine (Move (_distance));
 		if (playSound)
-			PlaySound ();
+			WallManager.instance.PlaySlamSound (transform.position);
 	}
 	
 	public float moveTime; 
@@ -103,19 +105,17 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
-	public AudioClip slamSound;
-	void PlaySound () {
+	void ResetPosition () {
 
-		AudioManager.instance.Play(slamSound, transform.position, 1, 1, 700);
-		playSound = false;
+		ResetPosition (false);
 	}
 
 	/// <summary>
 	/// Move position back to default one
 	/// </summary>
-	public void ResetPosition () {
+	public void ResetPosition (bool playSound) {
 
 		StopAllCoroutines ();
-		StartCoroutine (Move (-totalDistance));
+		Move (playSound, -totalDistance);
 	}
 }

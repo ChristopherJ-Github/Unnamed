@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 /// <summary>
@@ -22,7 +22,7 @@ public class AutomaticWallMovement : Singleton<AutomaticWallMovement> {
 	/// </summary>
 	IEnumerator CountDown () {
 
-		float timer = 5f;
+		float timer = 0.7f;
 		do {
 			timer -= Time.deltaTime;
 			yield return null;
@@ -33,17 +33,28 @@ public class AutomaticWallMovement : Singleton<AutomaticWallMovement> {
 	
 	void MoveRandomTiles () {
 
-		for (int tile = 0; tile < 100; tile ++) {
-			MoveRandomTile(false);
+		float totalDistance = 0;
+		int tilesToMove = 100;
+		Tile randomTile = null;
+		for (int tile = 0; tile < tilesToMove; tile ++) {
+			randomTile = MoveRandomTile(false);
+			totalDistance += Mathf.Abs(randomTile.totalDistance);
+		}
+		if (totalDistance > 0) {
+			WallManager.instance.PlaySlamSound(randomTile.transform.position);
 		}
 	}
 	
-	void MoveRandomTile (bool playSound) {
+	Tile MoveRandomTile (bool playSound) {
 
 		int wallIndex = Random.Range(0, 6);
-		int indexX = Random.Range(0, WallManager.instance.xAmt);
-		int indexY = Random.Range(0, WallManager.instance.yAmt);
+		int wallLength = WallManager.instance.walls[wallIndex].GetLength (0);
+		int wallWidth = WallManager.instance.walls [wallIndex].GetLength (1);
+		int indexX = Random.Range(0, wallLength);
+		int indexY = Random.Range(0, wallWidth);
 		Tile tile = WallManager.instance.walls [wallIndex][indexX, indexY];
-		tile.ResetPosition ();
+		//tile.ResetPosition (playSound);
+		tile.Move (playSound);
+		return tile;
 	}
 }
