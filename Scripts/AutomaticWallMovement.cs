@@ -33,16 +33,12 @@ public class AutomaticWallMovement : Singleton<AutomaticWallMovement> {
 	
 	void MoveRandomTiles () {
 
-		float totalDistance = 0;
 		int tilesToMove = 100;
 		Tile randomTile = null;
 		for (int tile = 0; tile < tilesToMove; tile ++) {
 			randomTile = MoveRandomTile(false);
-			totalDistance += Mathf.Abs(randomTile.totalDistance);
 		}
-		if (totalDistance > 0) {
-			WallManager.instance.PlaySlamSound(randomTile.transform.position);
-		}
+		WallManager.instance.PlaySlamSound(randomTile.transform.position);
 	}
 	
 	Tile MoveRandomTile (bool playSound) {
@@ -53,7 +49,6 @@ public class AutomaticWallMovement : Singleton<AutomaticWallMovement> {
 		int indexX = Random.Range(0, wallLength);
 		int indexY = Random.Range(0, wallWidth);
 		Tile tile = WallManager.instance.walls [wallIndex][indexX, indexY];
-		//tile.ResetPosition (playSound);
 		tile.Move (playSound);
 		return tile;
 	}
